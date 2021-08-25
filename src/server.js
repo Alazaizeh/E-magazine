@@ -4,7 +4,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const v1Routes = require('./routes/v1.js');
+
 
 //v2 route
 
@@ -28,7 +28,7 @@ app.use(logger);
 // Routes
 
 app.use(authRoutes);
-app.use('/api/v1', v1Routes);
+
 
 
 app.get('/',(req,res)=>{

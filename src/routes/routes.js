@@ -39,7 +39,7 @@ authRouter.get(
   permissions("delete"),
   async (req, res, next) => {
     const userRecords = await users.findAll({});
-    const list = userRecords.map((user) => user.username);
+    const list = userRecords.map((user) =>( {"username":user.username,"role":user.role,"id":user.id}));
     res.status(200).json(list);
   }
 );
@@ -47,7 +47,7 @@ authRouter.get(
 authRouter.get(
   "/articales",
   bearerAuth(users),
-  permissions("delete"),
+  permissions("read"),
   async (req, res, next) => {
     console.log(articales);
     const userRecords = await articales.findAll({});
@@ -69,9 +69,9 @@ authRouter.post(
     }
   }
 );
-authRouter.get("/secret", bearerAuth(users), async (req, res, next) => {
-  res.status(200).send("Welcome to the secret area");
-});
+// authRouter.get("/secret", bearerAuth(users), async (req, res, next) => {
+//   res.status(200).send("Welcome to the secret area");
+// });
 authRouter.put(
   "/update/:id",
   bearerAuth(users),
@@ -79,10 +79,6 @@ authRouter.put(
   async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-
-      console.log("xxxxxxxxxxxxxxxxxxxxx");
-      console.log(id, req.body);
-      console.log("xxxxxxxxxxxxxxxxxxxxx");
 
       let record = await articales.findOne({ where: { id } });
       let updateRecord = await record.update(req.body);
@@ -103,5 +99,17 @@ authRouter.delete(
     res.status(200).json(record);
   }
 );
+
+authRouter.delete(
+  "/deleteusers/:id",
+  bearerAuth(users),
+  permissions("delete"),
+  async (req, res) => {
+    const id = parseInt(req.params.id);
+    let record = await users.destroy({ where: { id } });
+    res.status(200).json(record);
+  }
+);
+
 
 module.exports = authRouter;
