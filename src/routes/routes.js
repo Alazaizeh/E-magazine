@@ -39,22 +39,21 @@ authRouter.get(
   permissions("delete"),
   async (req, res, next) => {
     const userRecords = await users.findAll({});
-    const list = userRecords.map((user) =>( {"username":user.username,"role":user.role,"id":user.id}));
+    const list = userRecords.map((user) => ({
+      username: user.username,
+      role: user.role,
+      id: user.id,
+    }));
     res.status(200).json(list);
   }
 );
 
-authRouter.get(
-  "/articales",
-  bearerAuth(users),
-  permissions("read"),
-  async (req, res, next) => {
-    console.log(articales);
-    const userRecords = await articales.findAll({});
+authRouter.get("/articales", async (req, res, next) => {
+  console.log(articales);
+  const userRecords = await articales.findAll({});
 
-    res.status(200).json(userRecords);
-  }
-);
+  res.status(200).json(userRecords);
+});
 authRouter.post(
   "/create",
   bearerAuth(users),
@@ -110,6 +109,5 @@ authRouter.delete(
     res.status(200).json(record);
   }
 );
-
 
 module.exports = authRouter;
