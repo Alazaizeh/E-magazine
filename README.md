@@ -1,7 +1,7 @@
 # E-magazine
 <!-- a periodical publication containing articles, aim on a fashion beauty and Nutrition. -->
 ### Deployed Link
-- [Heroku](https://e-magazineproject.herokuapp.com/)
+- [Heroku](https://e-magazinee.herokuapp.com/)
 
 ### Team Members
 1. Omar Alazaizeh
