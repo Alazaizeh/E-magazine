@@ -23,7 +23,8 @@ authRouter.get(
   }
 );
 
-authRouter.get("/articales", async (req, res, next) => {
+authRouter.get("/articales",  bearerAuth(users),
+  permissions("read"), async (req, res, next) => {
   const userRecords = await articales.getAll();
   res.status(200).json(userRecords);
 });
