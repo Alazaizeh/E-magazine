@@ -6,85 +6,46 @@ const authRouter = express.Router();
 const { users, articales } = require("../models/index");
 const basicAuth = require("../middleware/basic.js");
 const bearerAuth = require("../middleware/bearer.js");
+const signUpAuth = require("../middleware/signUp.js");
 const permissions = require("../middleware/acl.js");
 
-authRouter.post("/signup", async (req, res, next) => {
-  try {
-    let userRecord = await users.create(req.body);
+authRouter.post("/signup", signUpAuth, async (req, res, next) => {});
 
-    const output = {
-      user: {
-        _id: userRecord.id,
-        username: userRecord.username,
-      },
-      token: userRecord.token,
-    };
-    res.status(201).json(output);
-  } catch (e) {
-    next(e.message);
-  }
-});
-
-authRouter.post("/signin", basicAuth, (req, res, next) => {
-  const user = {
-    user: req.user,
-    token: req.user.token,
-  };
-  res.status(200).json(user);
-});
+authRouter.post("/signin", basicAuth, (req, res, next) => {});
 
 authRouter.get(
   "/users",
   bearerAuth(users),
   permissions("delete"),
   async (req, res, next) => {
-    const userRecords = await users.findAll({});
-    const list = userRecords.map((user) => ({
-      username: user.username,
-      role: user.role,
-      id: user.id,
-    }));
-    res.status(200).json(list);
+    const usersRec = await users.getAll();
+    res.status(200).json(usersRec);
   }
 );
 
 authRouter.get("/articales", async (req, res, next) => {
-  console.log(articales);
-  const userRecords = await articales.findAll({});
-
+  const userRecords = await articales.getAll();
   res.status(200).json(userRecords);
 });
+
 authRouter.post(
   "/create",
   bearerAuth(users),
   permissions("create"),
   async (req, res) => {
-    try {
-      let userRecord = await articales.create(req.body);
-
-      res.status(201).json(userRecord);
-    } catch (e) {
-      next(e.message);
-    }
+    let userRecord = await articales.create(req);
+    res.status(201).json(userRecord);
   }
 );
-// authRouter.get("/secret", bearerAuth(users), async (req, res, next) => {
-//   res.status(200).send("Welcome to the secret area");
-// });
+
 authRouter.put(
   "/update/:id",
   bearerAuth(users),
   permissions("update"),
   async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-
-      let record = await articales.findOne({ where: { id } });
-      let updateRecord = await record.update(req.body);
-      res.status(200).json(updateRecord);
-    } catch (error) {
-      res.status(200).json("Error");
-    }
+    const id = parseInt(req.params.id);
+    let updateRecord = await articales.update(id, req.body);
+    res.status(200).json(updateRecord);
   }
 );
 
@@ -94,7 +55,7 @@ authRouter.delete(
   permissions("delete"),
   async (req, res) => {
     const id = parseInt(req.params.id);
-    let record = await articales.destroy({ where: { id } });
+    let record = await articales.delete(id);
     res.status(200).json(record);
   }
 );
@@ -105,7 +66,7 @@ authRouter.delete(
   permissions("delete"),
   async (req, res) => {
     const id = parseInt(req.params.id);
-    let record = await users.destroy({ where: { id } });
+    let record = await users.deleteUser(id);
     res.status(200).json(record);
   }
 );

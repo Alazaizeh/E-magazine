@@ -1,5 +1,4 @@
 "use strict";
-require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -73,7 +72,27 @@ const userModel = (sequelize, DataTypes) => {
       throw new Error(e.message);
     }
   };
-
+  model.deleteUser = async function (id) {
+    try {
+      let record = await this.destroy({ where: { id } });
+      return record;
+    } catch (error) {
+      throw new Error(e.message);
+    }
+  };
+  model.getAll = async function () {
+    try {
+      const userRecords = await this.findAll({});
+      const list = userRecords.map((user) => ({
+        username: user.username,
+        role: user.role,
+        id: user.id,
+      }));
+      return list;
+    } catch (error) {
+      throw new Error(e.message);
+    }
+  };
   return model;
 };
 
